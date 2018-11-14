@@ -36,7 +36,7 @@ get_some_stderror<- function(FC_data){
   
   if (TRUE){ #fix with boolean for user would like to plot
       samples<- seq(from=1, to=length(list_for_plots), by = length(time_points)) #a list to interate by
-      pdf("ln(exp/ref)_plots.pdf", height = (ncol(FC_data)*5.3), width = 16)
+      pdf("raw_data_plots.pdf", height = (ncol(FC_data)*5.3), width = 16)
       par(mfrow=c(nrow(FC_data)/4, 4)) #control the margins of the plots
       par(mar=c(2,3,3,2))
     for (i in 1:length(samples)) {
