@@ -6,10 +6,11 @@ get_some_stderror<- function(FC_data){
   #2) go down to the plot section and make the plots pretty! 
   
   
-  destroy_baddies<- as.logical(readline(prompt="Eliminate poor samples? (TRUE/FALSE): "))
+  remove_samp<- as.logical(readline(prompt="Eliminate poor samples? (TRUE/FALSE): "))
 
   FC_data$"Std.Error" <- NA #Creates a new column
   c <- ncol(FC_data)
+  make_plots <- FALSE
 
   time_points<- (c(0:((ncol(FC_data)-4)/2)))*10 #finds the number of time points in dataset 
   
@@ -31,40 +32,41 @@ get_some_stderror<- function(FC_data){
     FC_data[i,c] <- stderror
     
     }
-
-  ## this section plots raw data and stores it to a pdf file in the directory the script is run in
-  
-  if (TRUE){ #fix with boolean for user would like to plot
-      samples<- seq(from=1, to=length(list_for_plots), by = length(time_points)) #a list to interate by
-      pdf("raw_data_plots.pdf", height = (ncol(FC_data)*5.3), width = 16)
-      par(mfrow=c(nrow(FC_data)/4, 4)) #control the margins of the plots
-      par(mar=c(2,3,3,2))
-    for (i in 1:length(samples)) {
-      start<- samples[i]
-      end<- samples[i]+(length(time_points)-1)
-      plot(time_points, list_for_plots[start:end]) #Jasper - make plots pretty here!! 
-    }
-     dev.off()
-  }
   
   
   # this section asks a user for a standard error cuttoff value 
   # and removes samples that don't meet the cuttoff
-  new.frame<- FC_data #copies FC dataframe to new frame 
-  for (i in 1:ncol(new.frame)){
-    new.frame[,i]=NA
+  good_samples.frame<- FC_data #copies FC dataframe to new frame 
+  for (i in 1:ncol(good_samples.frame)){
+    good_samples.frame[,i]=NA
   }
-  new.frame<-na.omit(new.frame)
-  if (destroy_baddies){
+  good_samples.frame<-na.omit(good_samples.frame)
+  if (remove_samp){
     cutoff<-as.numeric(readline(prompt="Insert cutoff threshold: "))
+    make_plots<- as.logical(readline(prompt="Plot poor samples? (TRUE/FALSE): "))
+    
     for (i in 1:nrow(FC_data)){
       if(FC_data[i,c] < cutoff){
-        new.frame <- rbind(new.frame, FC_data[i, ])
+        good_samples.frame <- rbind(good_samples.frame, FC_data[i, ])
         }
-      }
     }
-
-
+    FC_data<- good_samples.frame
+  }
+  
+  ## this section plots raw data and stores it to a pdf file in the directory the script is run in
+  if (make_plots){
+    samples<- seq(from=1, to=length(list_for_plots), by = length(time_points)) #a list to interate by
+    pdf("raw_data_plots.pdf", height = (ncol(FC_data)*5.3), width = 16)
+    par(mfrow=c(nrow(FC_data)/4, 4)) #control the margins of the plots
+    par(mar=c(2,3,3,2))
+    for (i in 1:length(samples)) {
+      start<- samples[i]
+      end<- samples[i]+(length(time_points)-1)
+      plot(time_points, list_for_plots[start:end], pch= 16, cex= 2, col= sample(1:600,1,replace = T))#generates plots
+      title(main = FC_data[i,1], xlab = "Generation", ylab = "NatLog(diff/refcount)")
+    }
+    dev.off()
+  }
   return(FC_data)
 }
 
