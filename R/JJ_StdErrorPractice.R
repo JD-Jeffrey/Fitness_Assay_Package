@@ -62,7 +62,9 @@ get_some_stderror<- function(FC_data){
     for (i in 1:length(samples)) {
       start<- samples[i]
       end<- samples[i]+(length(time_points)-1)
-      plot(time_points, list_for_plots[start:end], pch= 16, cex= 2, col= sample(1:600,1,replace = T))#generates plots
+      plot(time_points, list_for_plots[start:end], pch= 16, cex= 2, type = "o", 
+           col= sample(1:600,1,replace = T), ylim = c(-1,1))#generates plots
+      legend("topleft", c("Natlog"), bg="azure2", fill = "coral1")
       title(main = FC_data[i,1], xlab = "Generation", ylab = "NatLog(diff/refcount)")
     }
     dev.off()
