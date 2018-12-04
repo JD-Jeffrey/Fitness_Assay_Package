@@ -8,6 +8,9 @@ Analyze_Fitness_Data<- function(Well_key, FC_data){
   plot_boolean<- as.logical(readline(prompt="Plot results? (TRUE/FALSE): "))
   
   #remove rows for Mean and SD from FlowJo table output 
+  if("Std.Error" %in% colnames(FC_data)){
+    FC_data<-FC_data[-which(colnames(FC_data)=="Std.Error")]
+  }
   if ("Mean" %in% FC_data[,1]){
     FC_data<-FC_data[-(which(FC_data[,1]=="Mean")), ]
   }
